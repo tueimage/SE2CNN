@@ -84,8 +84,9 @@ def z2_se2n(
                 padding='VALID')
 
     # Reshape to an SE2 image (split the orientation and channelsOUT axis)
+    # Note: the batch size is unknown, hence this dimension needs to be obtained using the tensorflow function tf.shape, for the other dimensions we keep using tensor.shape since this allows us to keep track of the actual shapes (otherwise the shapes get convert to "Dimensions(None)").
     layer_output = tf.reshape(
-            layer_output,[tf.shape(layer_output)[0], tf.shape(layer_output)[1], tf.shape(layer_output)[2], orientations_nb, channelsOUT])
+            layer_output,[tf.shape(layer_output)[0], int(layer_output.shape[1]), int(layer_output.shape[2]), orientations_nb, channelsOUT])
     print("OUTPUT SE2N ACTIVATIONS SHAPE:", layer_output.get_shape())  # Debug
 
     return layer_output, kernel_stack
@@ -135,7 +136,7 @@ def se2n_se2n(
 
     # Prepare the input tensor (merge the orientation and channel axis) for the 2D convolutions:
     input_tensor_as_if_2D = tf.reshape(
-            input_tensor, [tf.shape(input_tensor)[0],tf.shape(input_tensor)[1],tf.shape(input_tensor)[2],orientations_nb*channelsIN])
+            input_tensor, [tf.shape(input_tensor)[0],int(input_tensor.shape[1]),int(input_tensor.shape[2]),orientations_nb*channelsIN])
     
     # Reshape the kernels for 2D convolutions (orientation+channelsIN axis are merged, rotation+channelsOUT axis are merged)
     kernels_as_if_2D = tf.transpose(kernel_stack, [1,2,3,4,0,5])
@@ -151,7 +152,7 @@ def se2n_se2n(
 
     # Reshape into an SE2 image (split the orientation and channelsOUT axis)
     layer_output = tf.reshape(
-            layer_output, [tf.shape(layer_output)[0],tf.shape(layer_output)[1],tf.shape(layer_output)[2],orientations_nb,channelsOUT])
+            layer_output, [tf.shape(layer_output)[0],int(layer_output.shape[1]),int(layer_output.shape[2]),orientations_nb,channelsOUT])
     print("OUTPUT SE2N ACTIVATIONS SHAPE:", layer_output.get_shape()) # Debug
 
     return layer_output, kernel_stack
