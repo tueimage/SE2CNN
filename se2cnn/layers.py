@@ -41,7 +41,8 @@ def z2_se2n(
 
         # Optional:
         periodicity=2 * np.pi,
-        diskMask=True):
+        diskMask=True,
+        padding='VALID'):
     """ Constructs a group convolutional layer.
         (lifting layer from Z2 to SE2N with N input number of orientations)
 
@@ -83,7 +84,7 @@ def z2_se2n(
         input=input_tensor,
         filter=kernels_as_if_2D,
         strides=[1, 1, 1, 1],
-        padding='VALID')
+        padding=padding)
 
     # Reshape to an SE2 image (split the orientation and channelsOUT axis)
     # Note: the batch size is unknown, hence this dimension needs to be
@@ -104,7 +105,8 @@ def se2n_se2n(
 
         # Optional:
         periodicity=2 * np.pi,
-        diskMask=True):
+        diskMask=True,
+        padding='VALID'):
     """ Constructs a group convolutional layer.
         (group convolution layer from SE2N to SE2N with N input number of orientations)
         INPUT:
@@ -160,7 +162,7 @@ def se2n_se2n(
         input=input_tensor_as_if_2D,
         filter=kernels_as_if_2D,
         strides=[1, 1, 1, 1],
-        padding='VALID')
+        padding=padding)
 
     # Reshape into an SE2 image (split the orientation and channelsOUT axis)
     layer_output = tf.reshape(
@@ -172,7 +174,7 @@ def se2n_se2n(
 
 # THE MAX-POOLING LAYER
 
-def spatial_max_pool(input_tensor, nbOrientations):
+def spatial_max_pool(input_tensor, nbOrientations, padding='VALID'):
     """ Performs spatial max-pooling on every orientation of the SE2N tensor.
         INPUT:
             - input_tensor in SE2n, a tensor flow tensor with expected shape:
@@ -190,7 +192,7 @@ def spatial_max_pool(input_tensor, nbOrientations):
             value=input_tensor[:, :, :, i, :],
             ksize=[1, 2, 2, 1],
             strides=[1, 2, 2, 1],
-            padding='VALID')
+            padding=padding)
 
     # Re-stack all the pooled activations along the orientation dimension
     tensor_pooled = tf.concat(
