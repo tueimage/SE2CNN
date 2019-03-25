@@ -327,7 +327,7 @@ def rotate_gconv_kernels(kernel, periodicity=2 * np.pi, diskMask=True):
         kernels_temp = kernels_planar_rotated[orientation]
         # [kernelSizeH,kernelSizeW,channelsIN,channelsOUT,orientations_nb]
         kernels_temp = tf.transpose(kernels_temp, [0, 1, 3, 4, 2])
-        # [kernelSizeH*kernelSizeW*channelsIN*channelsOUT*orientations_nb]
+        # [kernelSizeH*kernelSizeW*channelsIN*channelsOUT,orientations_nb]
         kernels_temp = tf.reshape(
             kernels_temp, [kernelSizeH * kernelSizeW * channelsIN * channelsOUT, orientations_nb])
         # Roll along the orientation axis
